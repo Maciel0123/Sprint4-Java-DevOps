@@ -6,6 +6,12 @@ pool:
 
 steps:
 
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '21'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 - task: Maven@3
   displayName: 'Executar JUnit Tests'
   inputs:
