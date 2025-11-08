@@ -5,6 +5,20 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+
+- task: Maven@3
+  displayName: 'Executar JUnit Tests'
+  inputs:
+    mavenPomFile: 'pom.xml'
+    goals: 'clean test'
+
+- task: PublishTestResults@2
+  displayName: 'Publicar resultados JUnit'
+  inputs:
+    testResultsFiles: '**/surefire-reports/*.xml'
+    testRunTitle: 'JUnit Results'
+    failTaskOnFailedTests: true
+
 - task: Docker@2
   inputs:
     containerRegistry: 'acrrm554773'
