@@ -139,7 +139,74 @@ cd sprint1-java
 
 - Integração com API dos gateways IoT
 - Integração com o front-end
+
+## Arquitetura + Fluxo CI/CD
+
+```mermaid
+flowchart LR
+
+USER((Usuário Final))
+DEV((Desenvolvedor))
+
+subgraph GitHub["GitHub"]
+  REPO[Repositório future-stack]
+end
+
+subgraph DevOps["Azure DevOps CI/CD"]
+  CI[CI - Maven Build + JUnit + Build Docker Image]
+  CD[CD - Release / Deploy Container]
   
+end
+
+subgraph Azure["Azure Cloud - rg-futurestack"]
+  ACR[(ACR - acrrm554773)]
+  ACI[(ACI - acirm554773)]
+  DB[(PostgreSQL Flexible Server<br/>futurestack)]
+  WEBAPP[(Web App - acrwebapprm554773)]
+end
+
+DEV -->|Push código| REPO
+REPO --> CI
+CI -->|Push Docker Image| ACR
+
+CD -->|Deploy Container| ACI
+CD -->|Deploy Container| WEBAPP
+ACR <--> ACI
+
+USER -->|HTTP/HTTPS| WEBAPP
+
+
+WEBAPP -->|API JDBC + SSL| DB
+
+```
+## Como executar CI/CD
+
+1. Acesse o portal da Azure
+2. Abra o Azure CLI e carregue os arquivos "Banco.sh", "infraACR.sh", "infra-aci-webapp.sh" no terminal
+3. Execute os comandos abaixo para dar permissão de executar os arquivos:
+```
+chmod +x ./Banco.sh
+chmod +x ./infraACR.sh
+chmod +x ./infra-aci-webapp.sh
+```
+4. Execute os comandos abaixo para excutar os primeiros 2 scripts:
+```
+az provider register --namespace Microsoft.ContainerRegistry
+az provider register --namespace Microsoft.DBforPostgreSQL
+./Banco.sh
+./infraACR.sh
+```
+5. Acesse o Azure Devops e crie a pipeline de CI com o "Github YAML"
+6. Após executar o CI, volte para o Azure CLI e execute os comandos:
+```
+az provider register --namespace Microsoft.ContainerRegistry
+az provider register --namespace Microsoft.Web
+./infra-aci-webapp.sh
+```
+7. Crie a pipeline de CD
+8. Após a execução do CD, acesse o seu WebApp e crie as variaveis de ambiente para o Banco Postgres com o mesmo nome das variaveis da usa API (pode ser necessario alterar a variavel WEBSITES_PORT)
+9. Acesse a URl e teste os endpoints
+    
 ## 👥 Integrantes
 
 - Mariana Christina RM: 554773
