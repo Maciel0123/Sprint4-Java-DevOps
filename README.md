@@ -1,4 +1,4 @@
-# futureStack 
+# FutureStack 
 
 Sistema inteligente de rastreamento de motos via Wi-Fi, com mapeamento digital em tempo real e adaptável a diferentes filiais.
 
